@@ -19,29 +19,29 @@ const algo = 'aes-256-cfb';
 const run = async () => {
   const exec = promisify(spawn);
 
-  await exec('dnf', ['install', 'shadowsocks-libev', '-y']);
+  await exec('dnf', {}, ['install', 'shadowsocks-libev', '-y']);
 
-  await exec('ss-server', [
+  await exec('ss-server', {}, [
     '-s', 'localhost',
     '-p', port,
     '-k', password,
     '-m', algo,
   ]);
 
-  await exec('ss-server', [
+  await exec('ss-server', {}, [
     '-s', 'localhost',
     '-p', port,
     '-k', password,
     '-m', algo,
   ]);
 
-  await exec('firewall-cmd', [
+  await exec('firewall-cmd', {}, [
     '--zone=public',
     '--permanent',
     `--add-port=${port}/tcp`,
   ]);
 
-  await exec('firewall-cmd', [
+  await exec('firewall-cmd', {}, [
     '--reload',
   ]);
 
