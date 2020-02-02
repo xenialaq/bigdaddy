@@ -9,7 +9,7 @@ const {
   log, error,
 } = console;
 
-const port = _.random(1e4, 5e4);
+const port = _.random(1e4, 5e4).toString();
 const password = [
   chance.word(),
   chance.word(),
