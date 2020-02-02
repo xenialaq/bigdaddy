@@ -44,7 +44,6 @@ const run = async () => {
   ];
   log(serverArgs);
   const ssServer = spawn('ss-server', serverArgs);
-
   ssServer.stdout.on('data', (data) => {
     log(`ss: ${data}`);
   });
