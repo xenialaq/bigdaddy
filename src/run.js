@@ -5,10 +5,7 @@ const {
 } = require('child_process');
 const { appendFileSync } = require('fs');
 const Promise = require('bluebird');
-
-const {
-  log, error,
-} = console;
+const debug = require('debug');
 
 const port = _.random(1e4, 5e4).toString();
 const password = [
@@ -20,27 +17,29 @@ const password = [
 const algo = 'aes-256-cfb';
 
 const logProc = ({ stderr, stdout }) => {
-  error((stderr || '').toString());
-  log((stdout || '').toString());
+  if (stderr) debug('E')(stderr.toString());
+  if (stdout) debug('D')(stdout.toString());
 };
 
 const logFile = (line) => appendFileSync('ss.log', line);
 
 const run = async () => {
   const dnfPlugin = spawnSync('dnf', ['install', 'dnf-command(copr)', '-y']);
-  // logProc(dnfPlugin);
+  logProc(dnfPlugin);
 
   const dnfRepo = spawnSync('dnf', ['copr', 'enable', 'librehat/shadowsocks', '-y']);
-  // logProc(dnfRepo);
+  logProc(dnfRepo);
 
   const dnfInstall = spawnSync('dnf', ['install', 'shadowsocks-libev', '-y']);
-  // logProc(dnfInstall);
+  logProc(dnfInstall);
 
   const pkill = spawnSync('pkill', ['-f', 'ss-server']);
-  // logProc(pkill);
+  logProc(pkill);
 
   const ipr = spawnSync('ip', ['r']);
-  const serverIp = ipr.stdout.toString().split('\n').filter((l) => l.indexOf('dev eth0 proto kernel') > -1)[0].replace(/[^0-9.]/g, '');
+  const serverIp = _.last(
+    ipr.stdout.toString().split('\n').filter((l) => l.indexOf('dev eth0 proto kernel') > -1)[0].split(' '),
+  );
 
   const serverArgs = [
     '-s', serverIp,
@@ -56,7 +55,7 @@ const run = async () => {
     logFile(data);
   });
   ssServer.on('close', (code) => {
-    log(`ss process exited with code ${code}`);
+    logFile(`ss process exited with code ${code}`);
   });
 
   await Promise.delay(5e3);
@@ -66,15 +65,15 @@ const run = async () => {
     '--permanent',
     `--add-port=${port}/tcp`,
   ]);
-  // logProc(firewallAddPort);
+  logProc(firewallAddPort);
 
   const firewallReload = spawnSync('firewall-cmd', [
     '--reload',
   ]);
-  // logProc(firewallReload);
+  logProc(firewallReload);
 
   const iptables = spawnSync('iptables', ['-nL']);
-  // logProc(iptables);
+  logProc(iptables);
 };
 
 
