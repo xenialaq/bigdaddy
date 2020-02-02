@@ -33,12 +33,16 @@ const run = async () => {
   const dnfInstall = spawnSync('dnf', ['install', 'shadowsocks-libev', '-y']);
   logProc(dnfInstall);
 
+  const ipr = spawnSync('ip', ['r']);
+  const serverIp = ipr.stdout.toString().split('\n').filter((l) => l.indexOf('default') > -1)[0].replace(/[^0-9.]/g, '');
+
   const ssServer = spawn('ss-server', [
-    '-s', 'localhost',
+    '-s', serverIp,
     '-p', port,
     '-k', password,
     '-m', algo,
   ]);
+
   ssServer.stdout.on('data', (data) => {
     log(`ss: ${data}`);
   });
