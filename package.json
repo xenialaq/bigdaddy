@@ -1,15 +1,14 @@
 {
   "name": "bigdaddy",
   "version": "1.0.0",
-  "description": "",
   "main": "run.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "node_modules/.bin/eslint src/**/*.js --fix",
+    "lint": "eslint src/**/*.js --fix",
     "start": "node src/run.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "WTFPL",
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
@@ -18,5 +17,14 @@
   "dependencies": {
     "chance": "^1.1.4",
     "lodash": "^4.17.15"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xenialaq/bigdaddy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xenialaq/bigdaddy/issues"
+  },
+  "homepage": "https://github.com/xenialaq/bigdaddy#readme",
+  "description": ""
 }

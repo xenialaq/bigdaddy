@@ -1,11 +1,13 @@
 const _ = require('lodash');
 const chance = require('chance').Chance();
 const {
-  spawn,
+  spawnSync,
 } = require('child_process');
+
 const {
-  promisify,
-} = require('util');
+  log,
+  error,
+} = console;
 
 const port = _.random(1e4, 5e4);
 const password = [
@@ -16,38 +18,38 @@ const password = [
 ].join('_');
 const algo = 'aes-256-cfb';
 
+const logProc = ({ stderr, stdout }) => {
+  log((stdout || '').toString());
+  error((stderr || '').toString());
+};
+
 const run = async () => {
-  const exec = promisify(spawn);
+  const dnf = spawnSync('dnf', ['install', 'shadowsocks-libev', '-y']);
+  logProc(dnf);
 
-  await exec('dnf', {}, ['install', 'shadowsocks-libev', '-y']);
-
-  await exec('ss-server', {}, [
+  const ssServer = spawnSync('ss-server', [
     '-s', 'localhost',
     '-p', port,
     '-k', password,
     '-m', algo,
   ]);
+  logProc(ssServer);
 
-  await exec('ss-server', {}, [
-    '-s', 'localhost',
-    '-p', port,
-    '-k', password,
-    '-m', algo,
-  ]);
-
-  await exec('firewall-cmd', {}, [
+  const firewallAddPort = spawnSync('firewall-cmd', [
     '--zone=public',
     '--permanent',
     `--add-port=${port}/tcp`,
   ]);
+  logProc(firewallAddPort);
 
-  await exec('firewall-cmd', {}, [
+  const firewallReload = spawnSync('firewall-cmd', [
     '--reload',
   ]);
+  logProc(firewallReload);
 
-  await exec('iptables -nL');
+  const iptables = spawnSync('iptables -nL');
+  logProc(iptables);
 };
 
 
-const { log } = console;
 run().then(() => log(port, password));
