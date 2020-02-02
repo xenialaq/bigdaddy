@@ -63,7 +63,7 @@ const run = async () => {
   ]);
   logProc(firewallReload);
 
-  const iptables = spawnSync('iptables -nL');
+  const iptables = spawnSync('iptables', ['-nL']);
   logProc(iptables);
 };
 
