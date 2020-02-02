@@ -47,10 +47,11 @@ const run = async () => {
     '-k', password,
     '-m', algo,
   ];
-  spawn('ss-server', serverArgs, {
+  const ssServer = spawn('ss-server', serverArgs, {
     detached: true,
     stdio: 'ignore',
   });
+  ssServer.unref();
 
   await Promise.delay(5e3);
 
