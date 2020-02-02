@@ -33,6 +33,9 @@ const run = async () => {
   const dnfInstall = spawnSync('dnf', ['install', 'shadowsocks-libev', '-y']);
   logProc(dnfInstall);
 
+  const pkill = spawnSync('pkill', ['-f', 'ss-server']);
+  logProc(pkill);
+
   const ipr = spawnSync('ip', ['r']);
   const serverIp = ipr.stdout.toString().split('\n').filter((l) => l.indexOf('default') > -1)[0].replace(/[^0-9.]/g, '');
 
@@ -42,7 +45,7 @@ const run = async () => {
     '-k', password,
     '-m', algo,
   ];
-  log(serverArgs);
+  // log(serverArgs);
   const ssServer = spawn('ss-server', serverArgs);
   ssServer.stdout.on('data', (data) => {
     log(`ss: ${data}`);
