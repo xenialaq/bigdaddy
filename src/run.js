@@ -47,18 +47,9 @@ const run = async () => {
     '-k', password,
     '-m', algo,
   ];
-  const ssServer = spawn('ss-server', serverArgs, {
+  spawn('ss-server', serverArgs, {
     detached: true,
     stdio: 'ignore',
-  });
-  ssServer.stdout.on('data', (data) => {
-    logFile(data);
-  });
-  ssServer.stderr.on('data', (data) => {
-    logFile(data);
-  });
-  ssServer.on('close', (code) => {
-    logFile(`ss process exited with code ${code}`);
   });
 
   await Promise.delay(5e3);
@@ -77,7 +68,8 @@ const run = async () => {
 
   const iptables = spawnSync('iptables', ['-nL']);
   logProc(iptables);
+
+  logFile(`${serverIp} ${port} ${password} ${algo}`);
 };
 
-
-run().then(() => logFile(`${port} ${password}`));
+run();
