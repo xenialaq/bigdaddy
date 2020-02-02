@@ -24,8 +24,14 @@ const logProc = ({ stderr, stdout }) => {
 };
 
 const run = async () => {
-  const dnf = spawnSync('dnf', ['install', 'shadowsocks-libev', '-y']);
-  logProc(dnf);
+  const dnfPlugin = spawnSync('dnf', ['install', 'dnf-command(copr)', '-y']);
+  logProc(dnfPlugin);
+
+  const dnfRepo = spawnSync('dnf', ['copr', 'enable', 'librehat/shadowsocks', '-y']);
+  logProc(dnfRepo);
+
+  const dnfInstall = spawnSync('dnf', ['install', 'shadowsocks-libev', '-y']);
+  logProc(dnfInstall);
 
   const ssServer = spawnSync('ss-server', [
     '-s', 'localhost',
