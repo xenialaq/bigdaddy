@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const chance = require('chance').Chance();
 const {
-  spawnSync, spawn,
+  spawnSync, exec,
 } = require('child_process');
 const Promise = require('bluebird');
 
@@ -46,7 +46,7 @@ const run = async () => {
     '-m', algo,
   ];
   // log(serverArgs);
-  const ssServer = spawn('ss-server', serverArgs);
+  const ssServer = exec(`ss-server ${serverArgs.join(' ')}`);
   ssServer.stdout.on('data', (data) => {
     log(`ss: ${data}`);
   });
