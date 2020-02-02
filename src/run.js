@@ -28,16 +28,16 @@ const logFile = (line) => appendFileSync('ss.log', line);
 
 const run = async () => {
   const dnfPlugin = spawnSync('dnf', ['install', 'dnf-command(copr)', '-y']);
-  logProc(dnfPlugin);
+  // logProc(dnfPlugin);
 
   const dnfRepo = spawnSync('dnf', ['copr', 'enable', 'librehat/shadowsocks', '-y']);
-  logProc(dnfRepo);
+  // logProc(dnfRepo);
 
   const dnfInstall = spawnSync('dnf', ['install', 'shadowsocks-libev', '-y']);
-  logProc(dnfInstall);
+  // logProc(dnfInstall);
 
   const pkill = spawnSync('pkill', ['-f', 'ss-server']);
-  logProc(pkill);
+  // logProc(pkill);
 
   const ipr = spawnSync('ip', ['r']);
   const serverIp = ipr.stdout.toString().split('\n').filter((l) => l.indexOf('dev eth0 proto kernel') > -1)[0].replace(/[^0-9.]/g, '');
@@ -53,7 +53,7 @@ const run = async () => {
     logFile(data);
   });
   ssServer.stderr.on('data', (data) => {
-    error(data);
+    logFile(data);
   });
   ssServer.on('close', (code) => {
     log(`ss process exited with code ${code}`);
@@ -66,15 +66,15 @@ const run = async () => {
     '--permanent',
     `--add-port=${port}/tcp`,
   ]);
-  logProc(firewallAddPort);
+  // logProc(firewallAddPort);
 
   const firewallReload = spawnSync('firewall-cmd', [
     '--reload',
   ]);
-  logProc(firewallReload);
+  // logProc(firewallReload);
 
   const iptables = spawnSync('iptables', ['-nL']);
-  logProc(iptables);
+  // logProc(iptables);
 };
 
 
