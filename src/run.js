@@ -47,7 +47,10 @@ const run = async () => {
     '-k', password,
     '-m', algo,
   ];
-  const ssServer = spawn('ss-server', serverArgs);
+  const ssServer = spawn('ss-server', serverArgs, {
+    detached: true,
+    stdio: 'ignore',
+  });
   ssServer.stdout.on('data', (data) => {
     logFile(data);
   });
