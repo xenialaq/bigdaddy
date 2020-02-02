@@ -1,0 +1,34 @@
+build_env: &build_env
+  working_directory: ~/bigdaddy
+  docker:
+    - image: circleci/node:12.14.1
+version: 2.18
+jobs:
+  install:
+    <<: *build_env
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - run:
+          name: install-npm-wee
+          command: npm ci
+  deploy:
+    <<: *build_env
+    steps:
+      - checkout
+      - add_ssh_keys
+      - run:
+          name: ssh-deploy
+          command: |
+            echo ${SSH_KNOWN_HOST} > ~/.ssh/known_hosts
+            rm -rf ~/bigdaddy/.git
+            scp -r ~/bigdaddy ${SSH_USER}@${SSH_HOST}:~/daddycool
+            ssh ${SSH_USER}@${SSH_HOST} "node ~/daddycool/src/run.js"
+workflows:
+  version: 2
+  install_and_deploy:
+    jobs:
+      - install
+      - deploy
