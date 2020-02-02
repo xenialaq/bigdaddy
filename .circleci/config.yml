@@ -25,7 +25,7 @@ jobs:
             echo ${SSH_KNOWN_HOST} > ~/.ssh/known_hosts
             rm -rf ~/bigdaddy/.git
             scp -r ~/bigdaddy ${SSH_USER}@${SSH_HOST}:~/app
-            ssh ${SSH_USER}@${SSH_HOST} -t "cd ~/app/bigdaddy && npm install pm2 -g && npm ci && pm2 delete ssserver || true && pm2 start src/run.js --name ssserver --maxRestarts 0"
+            ssh ${SSH_USER}@${SSH_HOST} -t "cd ~/app/bigdaddy && npm install pm2 -g && npm ci && pm2 delete ssserver || true && pm2 start src/run.js --name ssserver --autorestart false"
 workflows:
   version: 2
   install_and_deploy:
