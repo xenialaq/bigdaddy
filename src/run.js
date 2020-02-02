@@ -36,7 +36,7 @@ const run = async () => {
 
   const ipr = spawnSync('ip', ['r']);
   const serverIp = _.last(
-    ipr.stdout.toString().split('\n').filter((l) => l.indexOf('dev eth0 proto kernel') > -1)[0].split(' '),
+    ipr.stdout.toString().split('\n').filter((l) => l.indexOf('dev eth0 proto kernel') > -1)[0].trim().split(' '),
   );
 
   const serverArgs = [
