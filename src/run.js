@@ -1,9 +1,7 @@
 const _ = require('lodash');
 const chance = require('chance').Chance();
-const {
-  spawnSync, spawn,
-} = require('child_process');
-const { appendFileSync } = require('fs');
+const { spawnSync, spawn } = require('child_process');
+const { appendFileSync, openSync } = require('fs');
 const Promise = require('bluebird');
 const debug = require('debug');
 
@@ -47,9 +45,11 @@ const run = async () => {
     '-k', password,
     '-m', algo,
   ];
+  const out = openSync('./ss.log', 'a');
+  const err = openSync('./ss.log', 'a');
   const ssServer = spawn('ss-server', serverArgs, {
     detached: true,
-    stdio: 'ignore',
+    stdio: ['ignore', out, err],
   });
   ssServer.unref();
 
