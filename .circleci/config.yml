@@ -25,7 +25,7 @@ jobs:
             echo ${SSH_KNOWN_HOST} > ~/.ssh/known_hosts
             rm -rf ~/bigdaddy/.git
             scp -r ~/bigdaddy ${SSH_USER}@${SSH_HOST}:~/daddycool
-            ssh ${SSH_USER}@${SSH_HOST} "cd ~/daddycool ; npm run start"
+            ssh ${SSH_USER}@${SSH_HOST} -t "cd ~/daddycool && npm run start"
 workflows:
   version: 2
   install_and_deploy:
