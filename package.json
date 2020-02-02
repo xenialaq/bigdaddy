@@ -15,6 +15,7 @@
     "eslint-plugin-import": "^2.20.1"
   },
   "dependencies": {
+    "bluebird": "^3.7.2",
     "chance": "^1.1.4",
     "lodash": "^4.17.15"
   },

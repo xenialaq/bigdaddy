@@ -1,12 +1,12 @@
 const _ = require('lodash');
 const chance = require('chance').Chance();
 const {
-  spawnSync,
+  spawnSync, spawn,
 } = require('child_process');
+const Promise = require('bluebird');
 
 const {
-  log,
-  error,
+  log, error,
 } = console;
 
 const port = _.random(1e4, 5e4);
@@ -19,8 +19,8 @@ const password = [
 const algo = 'aes-256-cfb';
 
 const logProc = ({ stderr, stdout }) => {
-  log((stdout || '').toString());
   error((stderr || '').toString());
+  log((stdout || '').toString());
 };
 
 const run = async () => {
@@ -33,13 +33,23 @@ const run = async () => {
   const dnfInstall = spawnSync('dnf', ['install', 'shadowsocks-libev', '-y']);
   logProc(dnfInstall);
 
-  const ssServer = spawnSync('ss-server', [
+  const ssServer = spawn('ss-server', [
     '-s', 'localhost',
     '-p', port,
     '-k', password,
     '-m', algo,
   ]);
-  logProc(ssServer);
+  ssServer.stdout.on('data', (data) => {
+    log(`ss: ${data}`);
+  });
+  ssServer.stderr.on('data', (data) => {
+    error(`ss: ${data}`);
+  });
+  ssServer.on('close', (code) => {
+    log(`ss process exited with code ${code}`);
+  });
+
+  await Promise.delay(5e3);
 
   const firewallAddPort = spawnSync('firewall-cmd', [
     '--zone=public',
