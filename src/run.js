@@ -3,8 +3,8 @@ const { appendFileSync, openSync } = require('fs');
 const { spawnSync, spawn } = require('child_process');
 const chance = require('chance').Chance();
 const debug = require('debug');
-const nodemailer = require('nodemailer');
 const Promise = require('bluebird');
+const enc = require('./enc');
 
 const { log } = console;
 
@@ -76,25 +76,7 @@ const run = async () => {
   const configInfo = `${serverIp} ${port} ${password} ${algo}`;
   logFile(configInfo);
 
-  const testAccount = await nodemailer.createTestAccount();
-  log(testAccount);
-
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 465,
-    secure: true,
-    auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
-    },
-  });
-
-  await transporter.sendMail({
-    from: chance.email(),
-    to: chance.email(),
-    subject: chance.sentence(),
-    text: configInfo,
-  });
+  log(enc(configInfo));
 };
 
 run();
