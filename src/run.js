@@ -1,9 +1,12 @@
 const _ = require('lodash');
-const chance = require('chance').Chance();
-const { spawnSync, spawn } = require('child_process');
 const { appendFileSync, openSync } = require('fs');
-const Promise = require('bluebird');
+const { spawnSync, spawn } = require('child_process');
+const chance = require('chance').Chance();
 const debug = require('debug');
+const nodemailer = require('nodemailer');
+const Promise = require('bluebird');
+
+const { log } = console;
 
 const port = _.random(1e4, 5e4).toString();
 const password = [
@@ -70,7 +73,28 @@ const run = async () => {
   const iptables = spawnSync('iptables', ['-nL']);
   logProc(iptables);
 
-  logFile(`${serverIp} ${port} ${password} ${algo}`);
+  const configInfo = `${serverIp} ${port} ${password} ${algo}`;
+  logFile(configInfo);
+
+  const testAccount = await nodemailer.createTestAccount();
+  log(testAccount);
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.ethereal.email',
+    port: 465,
+    secure: false,
+    auth: {
+      user: testAccount.user,
+      pass: testAccount.pass,
+    },
+  });
+
+  await transporter.sendMail({
+    from: chance.email(),
+    to: chance.email(),
+    subject: chance.sentence(),
+    text: configInfo,
+  });
 };
 
 run();
