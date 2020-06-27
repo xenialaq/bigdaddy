@@ -25,6 +25,9 @@ const logProc = ({ stderr, stdout }) => {
 const logFile = (line) => appendFileSync('ss.log', line);
 
 const run = async () => {
+  const yumEpel = spawnSync('yum', ['install', 'epel-release', '-y']);
+  logProc(yumEpel);
+
   const dnfPlugin = spawnSync('dnf', ['install', 'dnf-command(copr)', '-y']);
   logProc(dnfPlugin);
 
