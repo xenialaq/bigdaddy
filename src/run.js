@@ -41,8 +41,9 @@ const run = async () => {
   logProc(pkill);
 
   const ipr = spawnSync('ip', ['r']);
+  const ipFilter = (s) => s.match(/^\d+.\d+.\d+.\d+$/);
   const serverIp = _.last(
-    ipr.stdout.toString().split('\n').filter((l) => l.indexOf('dev eth0 proto kernel') > -1)[0].trim().split(' '),
+    ipr.stdout.toString().split('\n').filter((l) => l.indexOf('dev eth0 proto kernel') > -1)[0].trim().split(' ').filter(ipFilter),
   );
 
   const serverArgs = [
