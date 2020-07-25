@@ -9,12 +9,22 @@ const enc = require('./enc');
 const { log } = console;
 
 const port = _.random(1e4, 5e4).toString();
+
+const scrambleCaseChar = (c) => (chance.bool({ likelihood: chance.d30() })
+  ? _.upperCase(c)
+  : _.lowerCase(c));
+
+const scrambleCaseWord = (word) => word.split('').map(scrambleCaseChar);
+
 const password = [
   chance.word(),
   chance.word(),
   chance.word(),
   chance.d100(),
-].join('_');
+]
+  .map(scrambleCaseWord)
+  .join('_');
+
 const algo = 'aes-256-cfb';
 
 const logProc = ({ stderr, stdout }) => {
