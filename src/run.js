@@ -20,7 +20,7 @@ const password = [
   chance.word(),
   chance.word(),
   chance.word(),
-  chance.d100(),
+  chance.d100().toString(),
 ]
   .map(scrambleCaseWord)
   .join('_');
