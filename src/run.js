@@ -5,16 +5,14 @@ const chance = require('chance').Chance();
 const debug = require('debug');
 const Promise = require('bluebird');
 const enc = require('./enc');
+const { scrambleCaseWord } = require('./util');
+const {
+  SS_ALGO, SS_PORT_START, SS_PORT_END, SS_PASSPHRASE_SEP, SS_LOG_PATH,
+} = require('./constants');
 
 const { log } = console;
 
-const port = _.random(1e4, 5e4).toString();
-
-const scrambleCaseChar = (c) => (chance.bool({ likelihood: chance.d30() })
-  ? _.upperCase(c)
-  : _.lowerCase(c));
-
-const scrambleCaseWord = (word) => word.split('').map(scrambleCaseChar);
+const port = _.random(SS_PORT_START, SS_PORT_END).toString();
 
 const password = [
   chance.word(),
@@ -23,16 +21,16 @@ const password = [
   chance.d100().toString(),
 ]
   .map(scrambleCaseWord)
-  .join('_');
+  .join(SS_PASSPHRASE_SEP);
 
-const algo = 'aes-256-cfb';
+const algo = SS_ALGO;
 
 const logProc = ({ stderr, stdout }) => {
   if (stderr) debug('E')(stderr.toString());
   if (stdout) debug('D')(stdout.toString());
 };
 
-const logFile = (line) => appendFileSync('ss.log', line);
+const logFile = (line) => appendFileSync(SS_LOG_PATH, line);
 
 const run = async () => {
   const yumEpel = spawnSync('yum', ['install', 'epel-release', '-y']);
@@ -62,8 +60,8 @@ const run = async () => {
     '-k', password,
     '-m', algo,
   ];
-  const out = openSync('./ss.log', 'a');
-  const err = openSync('./ss.log', 'a');
+  const out = openSync(SS_LOG_PATH, 'a');
+  const err = openSync(SS_LOG_PATH, 'a');
   const ssServer = spawn('ss-server', serverArgs, {
     detached: true,
     stdio: ['ignore', out, err],

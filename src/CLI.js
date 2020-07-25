@@ -4,6 +4,9 @@ const dec = require('./dec');
 const enc = require('./enc');
 const genKeys = require('./genKeys');
 const genPass = require('./genPass');
+const {
+  BD_PRIVATE_KEY_PATH, BD_PUB_KEY_PATH,
+} = require('./constants');
 
 const { log } = console;
 (async () => {
@@ -22,8 +25,8 @@ const { log } = console;
     log(genPass());
   } else if (value === 1) {
     const { publicKey, privateKey } = genKeys();
-    appendFileSync('keys.yaml', `- |\n${publicKey.trim().split('\n').map((line) => `  ${line}`).join('\n')}\n`);
-    writeFileSync('key.pkf', privateKey);
+    appendFileSync(BD_PUB_KEY_PATH, `- |\n${publicKey.trim().split('\n').map((line) => `  ${line}`).join('\n')}\n`);
+    writeFileSync(BD_PRIVATE_KEY_PATH, privateKey);
   } else if (value === 2) {
     const { input } = await prompts({
       name: 'input',
@@ -31,7 +34,7 @@ const { log } = console;
       message: 'Input',
     });
     log(enc(input));
-} else if (value === 3) {
+  } else if (value === 3) {
     const { input } = await prompts({
       name: 'input',
       type: 'text',
