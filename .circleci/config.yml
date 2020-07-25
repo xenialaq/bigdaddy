@@ -14,6 +14,9 @@ jobs:
       - run:
           name: install-npm-wee
           command: npm ci
+      - run:
+          name: test
+          command: npm test
   deploy:
     <<: *build_env
     steps:
@@ -24,8 +27,10 @@ jobs:
           command: |
             echo ${SSH_KNOWN_HOST} > ~/.ssh/known_hosts
             rm -rf ~/bigdaddy/.git
-            scp -r ~/bigdaddy ${SSH_USER}@${SSH_HOST}:~/app
-            ssh ${SSH_USER}@${SSH_HOST} -t "cd ~/app/bigdaddy && npm ci && npm run start"
+            ssh ${SSH_USER}@${SSH_HOST} -t "mkdir -p '/home/circleci/app' || exit 0"
+            scp -r ~/bigdaddy ${SSH_USER}@${SSH_HOST}:/home/circleci/app
+            ssh ${SSH_USER}@${SSH_HOST} -t "cd /home/circleci/app/bigdaddy && npm ci && npm run start"
+            ssh ${SSH_USER}@${SSH_HOST} -t "chown -R circleci:circleci /home/circleci/app/bigdaddy"
 workflows:
   version: 2
   install_and_deploy:

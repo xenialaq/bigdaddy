@@ -62,7 +62,7 @@ const run = async () => {
   ];
   const out = openSync(SS_LOG_PATH, 'a');
   const err = openSync(SS_LOG_PATH, 'a');
-  const ssServer = spawn('ss-server', serverArgs, {
+  const ssServer = spawn('su', ['-c', ['ss-server', ...serverArgs].join(' '), 'circleci'], {
     detached: true,
     stdio: ['ignore', out, err],
   });
