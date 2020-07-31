@@ -12,8 +12,12 @@ test('scrambleCaseChar rejects multiple chars', () => {
   expect(() => scrambleCaseChar('23')).toThrow();
 });
 
-test('scrambleCaseChar rejects null or undefined', () => {
+test('scrambleCaseChar rejects non string and empty inputs', () => {
+  expect(() => scrambleCaseChar('')).toThrow();
   expect(() => scrambleCaseChar()).toThrow();
+  expect(() => scrambleCaseChar([])).toThrow();
+  expect(() => scrambleCaseChar({})).toThrow();
+  expect(() => scrambleCaseChar(1)).toThrow();
   expect(() => scrambleCaseChar(null)).toThrow();
 });
 
