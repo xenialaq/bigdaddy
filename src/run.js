@@ -67,7 +67,7 @@ const run = async () => {
     '--list-ports',
   ]);
   logProc(firewallListPort);
-  const portsToClose = firewallListPort.split(/\s/).filter((portProtocol) => {
+  const portsToClose = firewallListPort.stdout.toString().split(/\s/).filter((portProtocol) => {
     const match = portProtocol.match(/^(\d+)\/tcp$/);
     if (!match) {
       return false;
