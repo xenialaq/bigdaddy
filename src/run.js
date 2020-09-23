@@ -1,27 +1,19 @@
 const _ = require('lodash');
 const { appendFileSync, openSync } = require('fs');
 const { spawnSync, spawn } = require('child_process');
-const chance = require('chance').Chance();
 const debug = require('debug');
 const Promise = require('bluebird');
 const enc = require('./enc');
-const { scrambleCaseWord } = require('./util');
+const genPass = require('./genPass');
 const {
-  SS_ALGO, SS_PORT_START, SS_PORT_END, SS_PASSPHRASE_SEP, SS_LOG_PATH,
+  SS_ALGO, SS_PORT_START, SS_PORT_END, SS_LOG_PATH,
 } = require('./constants');
 
 const { log } = console;
 
 const port = _.random(SS_PORT_START, SS_PORT_END).toString();
 
-const password = [
-  chance.word(),
-  chance.word(),
-  chance.word(),
-  chance.d100().toString(),
-]
-  .map(scrambleCaseWord)
-  .join(SS_PASSPHRASE_SEP);
+const password = genPass();
 
 const algo = SS_ALGO;
 
