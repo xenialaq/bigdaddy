@@ -62,6 +62,30 @@ const run = async () => {
 
   await Promise.delay(5e3);
 
+  const firewallListPort = spawnSync('firewall-cmd', [
+    '--zone=public',
+    '--list-ports',
+  ]);
+  logProc(firewallListPort);
+  const portsToClose = firewallListPort.split(/\s/).filter((portProtocol) => {
+    const match = portProtocol.match(/^(\d+)\/tcp$/);
+    if (!match) {
+      return false;
+    }
+    const portToClose = parseInt(match[1], 10);
+    return portToClose >= SS_PORT_START && portToClose <= SS_PORT_END;
+  });
+
+  for (let i = 0; i < portsToClose.length; i += 1) {
+    const portToClose = portsToClose[i];
+    const firewallRemovePort = spawnSync('firewall-cmd', [
+      '--zone=public',
+      '--permanent',
+      `--remove-port=${portToClose}`,
+    ]);
+    logProc(firewallRemovePort);
+  }
+
   const firewallAddPort = spawnSync('firewall-cmd', [
     '--zone=public',
     '--permanent',
